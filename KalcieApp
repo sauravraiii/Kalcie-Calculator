@@ -1,0 +1,205 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@sauravraiii 
+SauravRai-MaxQ
+/
+Kaclie-The-Calculator_App
+1
+00
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Kaclie-The-Calculator_App/KalcieApp
+@SauravRai-MaxQ
+SauravRai-MaxQ Create KalcieApp
+Latest commit fa50d85 23 minutes ago
+ History
+ 1 contributor
+162 lines (111 sloc)  6.67 KB
+  
+package com.example.calculator
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_main.*
+
+import kotlin.ArithmeticException
+
+
+class MainActivity : AppCompatActivity() {
+    var LastDot: Boolean = false  // declaring Lastdot Flag so check if last digit is dot or not.
+    var LastNumeric: Boolean =
+        false // declaring LastNumericFlag to check if last digit is Number or not.
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+    }
+
+    fun onDigit(view: View) {           // declaring onDigit function so that when the user clicks on 1-9 digits the digit is added to the TextView Input
+
+        tvInput.append((view as Button).text) // appending input with the digit and since the view is button we convert to text and then append.
+        LastNumeric = true // last numeric flag is set to true as a number is entered
+
+    }
+
+    fun onClr(view: View) { // declaring onClr function so that when user clicks the C button input is cleared.
+
+        tvInput.setText(" ")
+        LastNumeric =
+            false // LastNumeric and LastDot flags are set as false as there is no input of anything.
+        LastDot = false
+
+    }
+
+    fun onDecimal(view: View) { // declaring onDecimal function so that we can add decimal points to number.
+        if (LastNumeric && !LastDot) // only adding dot when the last entered text was number and not dot
+        {
+            tvInput.append(".")
+            LastNumeric = false // since we entered a dor the flag is set to false
+            LastDot = true // since we entered a dot this flag is set to true
+        }
+    }
+
+
+
+
+    fun onOperator(view: View) { // declaring onOperator to add functionality when adding an operator to input
+        if (LastNumeric && !isOperatorAdded(tvInput.text.toString())) { // if last digit was a number and not an operator it will add the operator.
+            tvInput.append((view as Button).text) // appending the operator to button
+            LastNumeric = false // both the flags are set to false
+            LastDot = false
+        }
+
+    }
+
+    private fun isOperatorAdded(value: String): Boolean // declaring isOperatorAdded to check if operator is added
+    {
+        return if (value.startsWith("-")) // if value( input.toString()) contains a "-" return false
+        {
+            false
+        } else { // confirm that value can contain other operators
+            value.contains("+") || value.contains("/") || value.contains("*")
+            value.contains("-")
+
+        }
+
+    }
+
+    private fun removeZeroAfterDot(result : String): String {
+        var value = result
+        if (result.contains(".0")) {
+           value = result.substring(0, result.length - 2)
+        }
+        return value
+    }
+
+    fun onEquals(view: View) {  // declaring onEquals to perform operations when clicking the equals button
+        if (LastNumeric) // function will perform only if the last digit was numeric
+        {
+            var textValue =
+                tvInput.text.toString() // storing value of input in another variable textValye
+            var prefix =
+                "" // declaring a prefix to check if there is a prefix and if there is a prefix we add it to the first number
+            try { //try catch block to experiment a few if loops
+                if (textValue.startsWith("-")) { // if value starts with a minus we delete it with a substring.
+                    prefix = "-"
+
+                    textValue =
+                        textValue.substring(1) // with help of substring method we delete the prefix
+
+                }
+                if (textValue.contains("-")) { // if value contains a minus (not before the first number) then it will split it at that delimiter
+                    val splitvalue = textValue.split("-") // using split function
+
+                    var one = splitvalue[0] // value before the minus
+                    var two = splitvalue[1] // value before the plus
+
+
+
+                    if (!prefix.isEmpty()) { // checking is prefix is not empty and then adding prefix to first split value to
+
+                        one = prefix + one // adding prefix to first number
+
+                    }
+
+                    tvInput.text = removeZeroAfterDot((one.toDouble() - two.toDouble()).toString()) // subtracting number one from number two
+                } else if (textValue.contains("+")) { // if value contains a minus (not before the first number) then it will split it at that delimiter
+                    val splitvalue = textValue.split("+") // using split function
+
+                    var one = splitvalue[0] // value before the minus
+                    var two = splitvalue[1] // value before the plus
+
+
+
+                    if (!prefix.isEmpty()) { // checking is prefix is not empty and then adding prefix to first split value to
+
+                        one = prefix + one // adding prefix to first number
+
+                    }
+                    tvInput.text = removeZeroAfterDot((one.toDouble() + two.toDouble()).toString())
+                } else if (textValue.contains("*")) { // if value contains a minus (not before the first number) then it will split it at that delimiter
+                    val splitvalue = textValue.split("*") // using split function
+
+                    var one = splitvalue[0] // value before the minus
+                    var two = splitvalue[1] // value before the plus
+
+
+
+                    if (!prefix.isEmpty()) { // checking is prefix is not empty and then adding prefix to first split value to
+
+                        one = prefix + one // adding prefix to first number
+
+                    }
+                    tvInput.text = removeZeroAfterDot((one.toDouble() * two.toDouble()).toString())
+                } else if (textValue.contains("/")) { // if value contains a minus (not before the first number) then it will split it at that delimiter
+                    val splitvalue = textValue.split("/") // using split function
+
+                    var one = splitvalue[0] // value before the minus
+                    var two = splitvalue[1] // value before the plus
+
+
+
+                    if (!prefix.isEmpty()) { // checking is prefix is not empty and then adding prefix to first split value to
+
+                        one = prefix + one // adding prefix to first number
+
+                    }
+                    tvInput.text = removeZeroAfterDot((one.toDouble() / two.toDouble()).toString())
+                }
+            } catch (e: ArithmeticException) // catch block arithmetic exception
+            {
+                e.printStackTrace()
+            }
+        }
+
+    }
+
+}
+© 2021 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete
